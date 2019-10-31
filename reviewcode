@@ -12,8 +12,8 @@ import java.util.List;
 public class CodeReviewTest 
 
     {
-
-    volatile Integer totalAge = 0;
+ //No need to used volatile because totalAge is local variable
+     volatile Integer totalAge = 0;
 
     CodeReviewTest(PersonDatabase<Person> personPersonDatabase) 
         {
@@ -59,7 +59,7 @@ public class CodeReviewTest
         }
 
         System.out.println("Total age =" + totalAge); // Comment:Can use logger.
-        System.out.println("Total number of females =" + personsList.size()); //
+        System.out.println("Total number of females =" + personsList.size()); 
         System.out.println("Total number of males =" + males.size());
     }
 
@@ -86,6 +86,7 @@ class Person
     public int getAge()
 
     {
+
         return age;
     }
 
@@ -104,7 +105,8 @@ class Person
 // Comment: If using Generic better Design approach is required
 
 
-interface PersonDatabase<E> {
+interface PersonDatabase<E> 
+{
 
     Person[] getAllPersons() throws IOException;
 
