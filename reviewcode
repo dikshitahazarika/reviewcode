@@ -1,0 +1,112 @@
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+// Imagine you are a peer of the developer who committed this (syntactically correct) Java code and asked you to review
+// their pull request. You work on the same product but are not familiar with this piece of work or its associated
+// requirements.
+//
+// Please use Java comments for your review feedback, putting them on separate lines around the code. Do not modify the
+// code itself.
+
+public class CodeReviewTest 
+
+    {
+
+    volatile Integer totalAge = 0;
+
+    CodeReviewTest(PersonDatabase<Person> personPersonDatabase) 
+        {
+        Person[] persons = null;
+
+        try 
+        {
+            persons = personPersonDatabase.getAllPersons();
+        } 
+        catch (IOException e) 
+        {
+	         //Comment: Try not to have an empty catch block It's like silently swallowing an error condition and then continuing execution.
+	         //Comment: Use print stack trace --(eg.e.printStackTrace())
+        }
+
+        List<Person> personsList = new LinkedList();
+
+        // Comment: Use For:Each loop for traversing faster because iterator are optimized for traversing.
+        // for (Person p : persons) { personsList.add(p); }
+
+        for (int i = 0; i <= persons.length; i++) 
+        {
+            personsList.add(persons[i]);
+        }
+
+        // Comment: ParallelStream is not a good idea as if you submit a long-running task, you effectively block all threads in the pool.
+                    and also it is very easy to get confusing results.
+
+        personsList.parallelStream().forEach(person -> 
+        {
+            totalAge += person.getAge();
+        });
+
+        List<Person> males = new LinkedList<>();
+
+        for (Person person : personsList)
+         {
+            switch (person.gender) 
+            {
+                case "Female": personsList.remove(person);
+                case "Male"  : males.add(person);
+            }
+        }
+
+        System.out.println("Total age =" + totalAge); // Comment:Can use logger.
+        System.out.println("Total number of females =" + personsList.size()); //
+        System.out.println("Total number of males =" + males.size());
+    }
+
+}
+
+
+class Person 
+{
+
+    private int age;
+    // Can use getter/setter method firstName/lastName/gender
+    private String firstName;
+    private String lastName;
+    String gender;
+
+    public Person(int age, String firstName, String lastName) 
+
+    {
+        this.age = age;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public int getAge()
+
+    {
+        return age;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+
+    {
+        return this.lastName == ((Person)obj).lastName;
+
+         // Comment: Use equals()with null checker(ternary)
+         // return (this.lastName == null ? ((Person)obj).lastName == null : this.lastName.equals(((Person)obj).lastName));
+    }
+
+}
+
+// Comment: If using Generic better Design approach is required
+
+
+interface PersonDatabase<E> {
+
+    Person[] getAllPersons() throws IOException;
+
+}
+
